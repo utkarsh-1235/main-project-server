@@ -1,19 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../Helpers/axiosInstance';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 // Initial state
 const initialState = {
-    user: null,
-    loading: false,
+    isLoggedIn: localStorage.getItem('isLoggedIn') || false,
+    user: localStorage.getItem('user') || null,
+    loading:  false,
     error: null,
   };
 
 export const createAccount = createAsyncThunk('auth/register',
 async(data)=>{
     try{
-        
-        const res = await axiosInstance.post('/teacher/create', data);
+        console.log(data.get('name'));
+        console.log(data.get('email'));
+        // const res = await axiosInstance.post('/teacher/create', data);
+        const res = await axios.post('http://localhost:3500/api/v1/teacher/create', data);
 
         console.log(res.data);
         if (res.data?.success) {
@@ -29,9 +33,9 @@ async(data)=>{
 })
 export const loginTeacher = createAsyncThunk(
     'auth/login-teacher',
-    async({data})=>{
+    async(data)=>{
         try{
-            const res = await axiosInstance.post(`auth/login/teacher`, data);
+            const res = await axios.post('http://localhost:3500/api/v1/auth/login/teacher', data);
 
             console.log(res.data);
             if (res.data?.success) {
@@ -71,6 +75,8 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginTeacher.fulfilled, (state, action) => {
+        localStorage.setItem('isLoggedIn', true)
+        localStorage.setItem('user', JSON.stringify(action?.payload?.user)) 
         state.loading = false;
         state.user = action.payload;
         state.error = null;

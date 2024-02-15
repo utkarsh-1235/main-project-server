@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { isEmail, isValidPassword } from "../../Helpers/RegexMatcher";
 import { useDispatch } from "react-redux";
 import { createAccount } from "../../Redux/Slices/authSlice";
+import axios from "axios";
 // import ErrorStrip from "../ErrorStrip";
 
 // Teacher Registration Form
@@ -45,18 +46,28 @@ const TeacherForm = () => {
         toast.error("Invalid Password")
     }
 
-    const formData = new FormData();
-         formData.append("name", teacher.name);
-         formData.append("email", teacher.email);
-         formData.append("qualification", teacher.qualification);
-         formData.append("department", teacher.department);
-         formData.append("username", teacher.username);
-         formData.append("password", teacher.password);
+    // const formData = new FormData();
+    //      formData.append("name", teacher.name);
+    //      formData.append("email", teacher.email);
+    //      formData.append("qualification", teacher.qualification);
+    //      formData.append("department", teacher.department);
+    //      formData.append("username", teacher.username);
+    //      formData.append("password", teacher.password);
 
-         console.log(formData.get("name"));
-         console.log(formData.get("email"));
+    //     //  console.log(formData.get("name"));
+    //     //  console.log(formData.get("email"));
 
-         const response = await dispatch(createAccount(formData));         
+
+    try {
+        
+        const response = await axios.post("http://localhost:3500/api/v1/teacher/create", teacher);
+        navigate("../");
+        toast.success(response.data.message);
+      } catch (err) {
+        setError(err);
+      
+    }
+         
 
          setTeacher({
          name: "",
@@ -70,7 +81,7 @@ const TeacherForm = () => {
   }
 
   return (
-    <form noValidate className="scrollWidth w-full  font-medium tracking-wide accent-violet-600">
+    <form noValidate onSubmit={addTeacher} className="scrollWidth w-full  font-medium tracking-wide accent-violet-600">
       <label className="block" htmlFor="name">
         Name:
       </label>
@@ -161,7 +172,7 @@ const TeacherForm = () => {
       >
         Register
       </button>
-      {error ? <ErrorStrip error={error} /> : ""}
+      {/* {error ? <ErrorStrip error={error} /> : ""} */}
     </form>
   );
 };

@@ -4,6 +4,8 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginTeacher, selectUser, selectError, clearError } from "../../Redux/Slices/authSlice";
 import { PiUserThin, PiSpinnerGapBold } from "react-icons/pi";
+// import axios from "axios";
+// import toast from "react-hot-toast";
 
 // import ErrorStrip from "../ErrorStrip";
 
@@ -26,11 +28,18 @@ const Login = () => {
     }, 4000);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
     setButtonText("Loading...");
     slowLoadingIndicator();
-    dispatch(loginTeacher({ username, password, userType }));
+    
+    const data = {
+        username,
+        password
+    }
+     dispatch(loginTeacher(data));
+    navigate("../");
+        
   };
 
   useEffect(() => {
